@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long Listening</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #status {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #555;
+        }
+
+        #result {
+            display: block;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                padding: 15px;
+                font-size: 18px;
+            }
+
+            #status {
+                font-size: 16px;
+            }
+
+            #result {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Long Listening Page</h1>
+
+    <!-- Long listening controls -->
+    <button onclick="startListening()">Start Listening</button>
+    <button onclick="stopListening()">Stop Listening</button>
+    <button onclick="startListening()">Continue Listening</button>
+
+    <p id="status">Not listening.</p>
+    <p>Transcribed Speech: <span id="result"></span></p>
+
+    <form method="get" action="{% url 'home' %}">
+        <button type="submit">Back to Home</button>
+    </form>
+
+    <script>
+        let recognition;
+        let isListening = false;
+        let capturedSpeech = "";
+
+        // Function to start or continue speech recognition
+        function startListening() {
+            if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+                alert("Your browser doesn't support speech recognition.");
+                return;
+            }
+
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                document.getElementById("status").innerText = "Listening...";
+            };
+
+            recognition.onresult = (event) => {
+                const speechResult = event.results[event.resultIndex][0].transcript;
+                capturedSpeech += " " + speechResult;
+                document.getElementById("result").innerText = capturedSpeech;
+            };
+
+            recognition.onerror = (event) => {
+                alert("Error occurred: " + event.error);
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                document.getElementById("status").innerText = "Stopped listening.";
+            };
+
+            recognition.start();
+        }
+
+        // Function to stop listening without clearing the recorded speech
+        function stopListening() {
+            if (recognition && isListening) {
+                recognition.stop();
+            }
+        }
+    </script>
+</body>
+</html>

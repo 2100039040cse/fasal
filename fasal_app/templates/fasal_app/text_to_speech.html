@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 500px;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            textarea {
+                height: 80px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 15px;
+                font-size: 18px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Text-to-Speech Page</h1>
+
+    <!-- Text-to-Speech controls -->
+    <textarea id="textToSpeak" placeholder="Type something here..."></textarea>
+    <br>
+    <button onclick="speakText()">Speak Now</button>
+
+    <form method="get" action="{% url 'home' %}">
+        <button type="submit">Back to Home</button>
+    </form>
+
+    <script>
+        // Function to speak text
+        function speakText() {
+            const text = document.getElementById("textToSpeak").value;
+            if (!('speechSynthesis' in window)) {
+                alert("Your browser doesn't support text-to-speech.");
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
